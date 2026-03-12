@@ -15,3 +15,20 @@ toDoc srs = setTitle (text (T.pack _docTitle)) $ doc $
     _systemLabel = entityLabel _system
     _system = specificationSystem srs
 
+getSpecificationEntities :: Specification -> [Entity]
+getSpecificationEntities spec = concat _entitiess where
+  _entitiess = map getRequirementEntities (specificationRequirements spec)
+
+getRequirementEntities :: Requirement -> [Entity]
+getRequirementEntities req = (requirementEntity req) : (getBehaviorEntities (requirementBehavior req))
+
+getBehaviorEntities :: Behavior -> [Entity]
+getBehaviorEntities (TypicalBehavior happyPath) = concat _entitiess where
+  _entitiess = map getConstraintEntities (happyPathConstraints happyPath)
+getBehaviorEntities (MitigationBehavior unhappyPath) = concat _entitiess where
+  _entitiess = map getConstraintEntities (happyPathConstraints (unhappyPathMitigationStrategy unhappyPath))
+
+getConstraintEntities :: Constraint -> [Entity]
+getConstraintEntities constraint = [constraintEntity constraint]
+
+
