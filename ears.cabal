@@ -108,5 +108,6 @@ test-suite ears-test
         ears,
         pandoc-types,
         pandoc,
-        text
+        text,
+        bytestring
 

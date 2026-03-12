@@ -1,12 +1,12 @@
 module EarsTypes where
 
-import Text.Pandoc.Definition (Block)
+import Text.Pandoc.Builder (Blocks)
 
 data Entity = MakeEntity {
   entityLabel :: String,
   entityIsPlural :: Bool,
   entityIsDefined :: Bool,
-  entityDescription :: Block,
+  entityDescription :: Blocks,
   entityOptionalFeatures :: [String],
   entityBoundaryEvents :: [String],
   entityStates :: [String],
@@ -35,5 +35,8 @@ data Requirement = MakeRequirement {
   requirementRationale :: String } deriving Show
 
 data Specification = MakeSpecification {
+  specificationSystem :: Entity,
+  specificationPurpose :: Blocks,
+  specificationScope :: Blocks,
   specificationRequirements :: [Requirement] } deriving (Show)
 

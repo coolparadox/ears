@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Main (main) where
 
 import EarsTypes
@@ -9,13 +11,14 @@ import Text.Pandoc.Writers
 import Text.Pandoc.Options
 import Text.Pandoc.Class
 import Text.Pandoc.Error
+import System.IO
 
 entity1 :: Entity
 entity1 = MakeEntity {
   entityLabel = "SystemXWZ",
   entityIsPlural = False,
   entityIsDefined = False,
-  entityDescription = Para [ Str (T.pack "The first entity.") ],
+  entityDescription = para "The first entity.",
   entityOptionalFeatures = [],
   entityBoundaryEvents = [],
   entityStates = [],
@@ -34,8 +37,17 @@ requirement1 = MakeRequirement {
   requirementRationale = "The system must attend to expectations."
 }
 
+purpose :: Blocks
+purpose = para "The System is an internally developed proprietary software."
+
+scope :: Blocks
+scope = para "This document contains software requirements for The System software release."
+
 srs :: Specification
 srs = MakeSpecification {
+  specificationSystem = entity1,
+  specificationPurpose = purpose,
+  specificationScope = scope,
   specificationRequirements = [requirement1] }
 
 outDoc :: Pandoc
@@ -43,6 +55,10 @@ outDoc = toDoc srs
 
 main :: IO ()
 main = do
-  outContent <- runIO (writeAsciiDoc def outDoc) >>= handleError
-  print outContent
+  outHandle <- openFile "srs.md" WriteMode
+  content <- runIO (writeMarkdown def outDoc) >>= handleError
+  --print content
+  hPutStr outHandle (T.unpack content)
+  hClose outHandle
+  putStrLn "Created srs.md"
 
