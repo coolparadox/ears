@@ -1,16 +1,21 @@
 module Main (main) where
 
 import EarsTypes
+import EarsDoc
 
-import Data.Text (pack)
-import Text.Pandoc.Definition (Block(..), Inline(..))
+import qualified Data.Text as T
+import Text.Pandoc.Builder
+import Text.Pandoc.Writers
+import Text.Pandoc.Options
+import Text.Pandoc.Class
+import Text.Pandoc.Error
 
 entity1 :: Entity
 entity1 = MakeEntity {
   entityLabel = "SystemXWZ",
   entityIsPlural = False,
   entityIsDefined = False,
-  entityDescription = Para [ Str (pack "The first entity.") ],
+  entityDescription = Para [ Str (T.pack "The first entity.") ],
   entityOptionalFeatures = [],
   entityBoundaryEvents = [],
   entityStates = [],
@@ -33,7 +38,11 @@ srs :: Specification
 srs = MakeSpecification {
   specificationRequirements = [requirement1] }
 
+outDoc :: Pandoc
+outDoc = toDoc srs
+
 main :: IO ()
 main = do
-  print srs
+  outContent <- runIO (writeAsciiDoc def outDoc) >>= handleError
+  print outContent
 
