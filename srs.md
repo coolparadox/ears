@@ -13,8 +13,23 @@ release.
 
 The first entity.
 
+## The aircrafts
+
+Travelling or grounded flying devices.
+
 # Requirements
 
 ## REQ-01
 
-SystemXWZ shall work and bring peace.
+Where SystemXWZ has overspeed protection and wings, when SystemXWZ is
+turned off while the aircrafts are on the ground, SystemXWZ shall
+silentiate and bring peace.
+
+Rationale: The system must attend to expectations.
+
+## REQ-02
+
+Where SystemXWZ has windows, if it rains then SystemXWZ shall close its
+windows.
+
+Rationale: The system must avoid bad behavior.

@@ -1,23 +1,27 @@
 module EarsDoc where
 
 import EarsTypes
+import EarsUtils (joinWords)
 
 import Text.Pandoc
 import Text.Pandoc.Builder
 import qualified Data.Text as T
 
-class EarsDoc a where
+class (Ears a) => EarsDoc a where
+  makeStatement :: Bool -> a -> String
+  makeStatement isStart x = joinWords isStart (getStatement x)
   toBlocks :: a -> Blocks
 
 instance EarsDoc Entity where
   toBlocks entity = _header <> _body where
-    _header = header 2 (text (T.pack (getStatement entity True)))
+    _header = header 2 (text (T.pack (makeStatement True entity)))
     _body = entityDescription entity
 
 instance EarsDoc Requirement where
   toBlocks requirement = _header <> _body where
     _header = header 2 (text (T.pack (requirementLabel requirement)))
-    _body = para (text (T.pack (getStatement requirement True)))
+    _body = para (text (T.pack (makeStatement True requirement ++ "."))) <>
+      para (text (T.pack ("Rationale: " ++ requirementRationale requirement)))
 
 instance EarsDoc Specification where
   toBlocks specification = _purpose <> _scope <> _definitions <> _requirements where
@@ -30,9 +34,7 @@ instance EarsDoc Specification where
 
 weave :: Specification -> Pandoc
 weave specification = setTitle (text (T.pack _docTitle)) $ doc $ _body where
-  _docTitle = _systemLabel ++ " Software Requirement Specification"
-  _systemLabel = getStatement _system True
-  _system = specificationSystem specification
+  _docTitle = makeStatement True specification
   _body = toBlocks specification
 
 
