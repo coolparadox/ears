@@ -50,13 +50,13 @@ srs = MakeSpecification {
   specificationScope = scope,
   specificationRequirements = [requirement1] }
 
-outDoc :: Pandoc
-outDoc = toDoc srs
+document :: Pandoc
+document = weave srs
 
 main :: IO ()
 main = do
   outHandle <- openFile "srs.md" WriteMode
-  content <- runIO (writeMarkdown def outDoc) >>= handleError
+  content <- runIO (writeMarkdown def document) >>= handleError
   --print content
   hPutStr outHandle (T.unpack content)
   hClose outHandle

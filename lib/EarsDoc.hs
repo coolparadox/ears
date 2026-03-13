@@ -6,29 +6,33 @@ import Text.Pandoc
 import Text.Pandoc.Builder
 import qualified Data.Text as T
 
-toDoc :: Specification -> Pandoc
-toDoc srs = setTitle (text (T.pack _docTitle)) $ doc $
-  header 1 (text (T.pack "Purpose")) <> (specificationPurpose srs) <>
-  header 1 (text (T.pack "Scope")) <> (specificationScope srs)
-  where
-    _docTitle = _systemLabel ++ " Software Requirement Specification"
-    _systemLabel = entityLabel _system
-    _system = specificationSystem srs
+class EarsDoc a where
+  toBlocks :: a -> Blocks
 
-getSpecificationEntities :: Specification -> [Entity]
-getSpecificationEntities spec = concat _entitiess where
-  _entitiess = map getRequirementEntities (specificationRequirements spec)
+instance EarsDoc Entity where
+  toBlocks entity = _header <> _body where
+    _header = header 2 (text (T.pack (entityLabel entity)))
+    _body = entityDescription entity
 
-getRequirementEntities :: Requirement -> [Entity]
-getRequirementEntities req = (requirementEntity req) : (getBehaviorEntities (requirementBehavior req))
+instance EarsDoc Requirement where
+  toBlocks requirement = _header <> _body where
+    _header = header 2 (text (T.pack (requirementLabel requirement)))
+    _body = para (text (T.pack "FIXME"))
 
-getBehaviorEntities :: Behavior -> [Entity]
-getBehaviorEntities (TypicalBehavior happyPath) = concat _entitiess where
-  _entitiess = map getConstraintEntities (happyPathConstraints happyPath)
-getBehaviorEntities (MitigationBehavior unhappyPath) = concat _entitiess where
-  _entitiess = map getConstraintEntities (happyPathConstraints (unhappyPathMitigationStrategy unhappyPath))
+instance EarsDoc Specification where
+  toBlocks specification = _purpose <> _scope <> _definitions <> _requirements where
+    _purpose = header 1 (text (T.pack "Purpose")) <> (specificationPurpose specification)
+    _scope = header 1 (text (T.pack "Scope")) <> (specificationScope specification)
+    _definitions = header 1 (text (T.pack "Definitions")) <> _definitionsBody
+    _definitionsBody = fromList (concat (map toList (map toBlocks (getEntities specification))))
+    _requirements = header 1 (text (T.pack "Requirements")) <> _requirementsBody
+    _requirementsBody = fromList (concat (map toList (map toBlocks (specificationRequirements specification))))
 
-getConstraintEntities :: Constraint -> [Entity]
-getConstraintEntities constraint = [constraintEntity constraint]
+weave :: Specification -> Pandoc
+weave specification = setTitle (text (T.pack _docTitle)) $ doc $ _body where
+  _docTitle = _systemLabel ++ " Software Requirement Specification"
+  _systemLabel = entityLabel _system
+  _system = specificationSystem specification
+  _body = toBlocks specification
 
 
