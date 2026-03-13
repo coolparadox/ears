@@ -15,7 +15,7 @@ import System.IO
 
 entity1 :: Entity
 entity1 = MakeEntity {
-  entityLabel = "SystemXWZ",
+  entityName = "SystemXWZ",
   entityIsPlural = False,
   entityIsDefined = False,
   entityDescription = para "The first entity.",
@@ -27,7 +27,7 @@ entity1 = MakeEntity {
 happyPath1 :: HappyPath
 happyPath1 = MakeHappyPath {
   happyPathConstraints = [],
-  happyPathOutcomes = [ "works" ] }
+  happyPathOutcomes = [ "work", "bring peace" ] }
 
 requirement1 :: Requirement
 requirement1 = MakeRequirement {

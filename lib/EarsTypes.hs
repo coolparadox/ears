@@ -1,13 +1,17 @@
 module EarsTypes where
 
-import Data.List
+import EarsUtils (joinWords, makeStatement, andify)
+
 import Text.Pandoc.Builder (Blocks)
+
+import Data.List (nub, intersperse)
 
 class Ears a where
   getEntities :: a -> [Entity]
+  getStatement :: a -> Bool -> String
 
 data Entity = MakeEntity {
-  entityLabel :: String,
+  entityName :: String,
   entityIsPlural :: Bool,
   entityIsDefined :: Bool,
   entityDescription :: Blocks,
@@ -18,6 +22,8 @@ data Entity = MakeEntity {
 
 instance Ears Entity where
   getEntities entity = [entity]
+  getStatement (MakeEntity name _ False _ _ _ _ _) _ = name
+  getStatement (MakeEntity name _ True _ _ _ _ _) isStart = makeStatement isStart ["the", name]
 
 data Constraint = MakeConstraint {
   constraintEntity :: Entity,
@@ -27,6 +33,7 @@ data Constraint = MakeConstraint {
 
 instance Ears Constraint where
   getEntities = getEntities . constraintEntity
+  getStatement constraint _ = "FIXME: Constraint statement"
 
 data HappyPath = MakeHappyPath {
   happyPathConstraints :: [Constraint],
@@ -34,6 +41,7 @@ data HappyPath = MakeHappyPath {
 
 instance Ears HappyPath where
   getEntities = nub . concat . (map getEntities) . happyPathConstraints
+  getStatement (MakeHappyPath _ outcomes) isStart = makeStatement isStart (andify outcomes)
 
 data UnhappyPath = MakeUnhappyPath {
   unhappyPathTriggeringEvents :: [String],
@@ -41,6 +49,7 @@ data UnhappyPath = MakeUnhappyPath {
 
 instance Ears UnhappyPath where
   getEntities = getEntities . unhappyPathMitigationStrategy
+  getStatement unhappyPath _ = "FIXME"
 
 data Behavior =
   TypicalBehavior HappyPath |
@@ -49,6 +58,7 @@ data Behavior =
 instance Ears Behavior where
   getEntities (TypicalBehavior happyPath) = getEntities happyPath
   getEntities (MitigationBehavior unhappyPath) = getEntities unhappyPath
+  getStatement (TypicalBehavior happyPath) isStart = getStatement happyPath isStart
 
 data Requirement = MakeRequirement {
   requirementLabel :: String,
@@ -60,6 +70,10 @@ instance Ears Requirement where
   getEntities requirement = nub (_requirementEntity : _behaviorEntities) where
     _requirementEntity = requirementEntity requirement
     _behaviorEntities = getEntities (requirementBehavior requirement)
+  getStatement (MakeRequirement _ entity behavior _) isStart =
+    joinWords [_system, "shall", _response] where
+    _system = getStatement entity isStart
+    _response = getStatement behavior False
 
 data Specification = MakeSpecification {
   specificationSystem :: Entity,
@@ -71,4 +85,5 @@ instance Ears Specification where
   getEntities specification = nub (_specificationEntity : _requirementsEntities) where
     _specificationEntity = specificationSystem specification
     _requirementsEntities = concat (map getEntities (specificationRequirements specification))
+  getStatement specification _ = "FIXME"
 

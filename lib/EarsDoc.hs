@@ -11,13 +11,13 @@ class EarsDoc a where
 
 instance EarsDoc Entity where
   toBlocks entity = _header <> _body where
-    _header = header 2 (text (T.pack (entityLabel entity)))
+    _header = header 2 (text (T.pack (getStatement entity True)))
     _body = entityDescription entity
 
 instance EarsDoc Requirement where
   toBlocks requirement = _header <> _body where
     _header = header 2 (text (T.pack (requirementLabel requirement)))
-    _body = para (text (T.pack "FIXME"))
+    _body = para (text (T.pack (getStatement requirement True)))
 
 instance EarsDoc Specification where
   toBlocks specification = _purpose <> _scope <> _definitions <> _requirements where
@@ -31,7 +31,7 @@ instance EarsDoc Specification where
 weave :: Specification -> Pandoc
 weave specification = setTitle (text (T.pack _docTitle)) $ doc $ _body where
   _docTitle = _systemLabel ++ " Software Requirement Specification"
-  _systemLabel = entityLabel _system
+  _systemLabel = getStatement _system True
   _system = specificationSystem specification
   _body = toBlocks specification
 
