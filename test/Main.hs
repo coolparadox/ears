@@ -65,7 +65,7 @@ srs = MakeSpecification {
   specificationSystem = entity1,
   specificationPurpose = purpose,
   specificationScope = scope,
-  specificationRequirements = [requirement1, requirement2] }
+  specificationRequirements = [Left requirement1, Right (MakeRequirementGroup "Group One" [Left requirement2])] }
 
 document :: Pandoc
 document = weave srs

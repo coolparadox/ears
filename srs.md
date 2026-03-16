@@ -27,7 +27,9 @@ silentiate and bring peace.
 
 Rationale: The system must attend to expectations.
 
-## REQ-02
+## Group One
+
+### REQ-02
 
 Where SystemXWZ has windows, if it rains then SystemXWZ shall close its
 windows.

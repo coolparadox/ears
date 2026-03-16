@@ -1,5 +1,6 @@
 module EarsUtils where
 
+import Text.Pandoc.Builder (Blocks, fromList, toList)
 import Data.Char (toUpper)
 import Data.List (intercalate, intersperse)
 
@@ -31,4 +32,7 @@ prependToShall _ [] = []
 prependToShall [] tokens = tokens
 prependToShall prefixes (s@("shall") : tokens) = prefixes ++ [s] ++ tokens
 prependToShall prefixes (token:tokens) = token : (prependToShall prefixes tokens)
+
+flatifyBlocks :: [Blocks] -> Blocks
+flatifyBlocks = fromList . concat . (map toList)
 
