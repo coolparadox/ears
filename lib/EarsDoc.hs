@@ -18,10 +18,12 @@ instance EarsDoc Entity where
     _body = entityDescription entity
 
 instance EarsDoc Requirement where
-  toBlocks headerLevel requirement = _header <> _body where
-    _header = header headerLevel (text (T.pack (requirementLabel requirement)))
-    _body = para (text (T.pack (makeStatement True requirement ++ "."))) <>
-      para (text (T.pack ("Rationale: " ++ requirementRationale requirement)))
+  toBlocks _ requirement = _statement <> _rationale where
+    _statement = para (_label <> _separator <> _text)
+    _label = strong (text (T.pack (requirementLabel requirement)))
+    _separator = text (T.pack " ")
+    _text = text (T.pack ((makeStatement True requirement) ++ "."))
+    _rationale = para (text (T.pack ("Rationale: " ++ requirementRationale requirement)))
 
 instance EarsDoc RequirementGroup where
   toBlocks headerLevel (MakeRequirementGroup title reqs) = _header <> _body where
