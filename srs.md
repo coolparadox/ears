@@ -19,15 +19,15 @@ Travelling or grounded flying devices.
 
 # Requirements
 
-**REQ-01** Where SystemXWZ has overspeed protection and wings, when
+**REQ-01** - *Where SystemXWZ has overspeed protection and wings, when
 SystemXWZ is turned off while the aircrafts are on the ground, SystemXWZ
-shall silentiate and bring peace.
+shall silentiate and bring peace.*
 
-Rationale: The system must attend to expectations.
+(Rationale) The system must attend to expectations.
 
 ## Group One
 
-**REQ-02** Where SystemXWZ has windows, if it rains then SystemXWZ shall
-close its windows.
+**REQ-02** - *Where SystemXWZ has windows, if it rains then SystemXWZ
+shall close its windows.*
 
-Rationale: The system must avoid bad behavior.
+(Rationale) The system must avoid bad behavior.

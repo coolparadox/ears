@@ -65,6 +65,7 @@ srs = MakeSpecification {
   specificationSystem = entity1,
   specificationPurpose = purpose,
   specificationScope = scope,
+  specificationEntities = [],
   specificationRequirements = [Left requirement1, Right (MakeRequirementGroup "Group One" [Left requirement2])] }
 
 document :: Pandoc

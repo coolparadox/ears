@@ -23,7 +23,7 @@ instance EarsDoc Requirement where
     _label = strong (text (T.pack (requirementLabel requirement)))
     _separator = text (T.pack " - ")
     _text = emph (text (T.pack ((makeStatement True requirement) ++ ".")))
-    _rationale = para (text (T.pack ("(Rationale: " ++ requirementRationale requirement ++ ")")))
+    _rationale = para (text (T.pack ("(Rationale) " ++ requirementRationale requirement)))
 
 instance EarsDoc RequirementGroup where
   toBlocks headerLevel (MakeRequirementGroup title reqs) = _header <> _body where

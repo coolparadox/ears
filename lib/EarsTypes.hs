@@ -113,12 +113,12 @@ data Specification = MakeSpecification {
   specificationSystem :: Entity,
   specificationPurpose :: Blocks,
   specificationScope :: Blocks,
+  specificationEntities :: [Entity],
   specificationRequirements :: [Either Requirement RequirementGroup] } deriving (Show, Eq)
 
 instance EarsEntity Specification where
-  getEntities specification = nub (_specificationEntity : _requirementsEntities) where
-    _specificationEntity = specificationSystem specification
-    _requirementsEntities = concat (map (either getEntities getEntities) (specificationRequirements specification))
+  getEntities (MakeSpecification system _ _ entities requirements) = nub ([system] ++ entities ++ _requirementsEntities) where
+    _requirementsEntities = concat (map (either getEntities getEntities) requirements)
 
 instance EarsStatement Specification where
   getStatement specification = _systemTokens ++ _titleTokens where
