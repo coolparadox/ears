@@ -40,8 +40,10 @@ instance EarsDoc Specification where
     _requirementsBody = flatifyBlocks (map (either (toBlocks (headerLevel + 1)) (toBlocks (headerLevel + 1))) (specificationRequirements specification))
 
 weave :: Specification -> Pandoc
-weave specification = setTitle (text (T.pack _docTitle)) $ doc $ _body where
+weave specification = setTitle (text (T.pack _docTitle)) $ doc $ _content where
   _docTitle = makeStatement True specification
+  _content = _body <> _disclaimer
+  _disclaimer = blockQuote (para (smallcaps (text (T.pack "This file was automatically generated."))))
   _body = toBlocks 1 specification
 
 
