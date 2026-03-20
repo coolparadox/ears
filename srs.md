@@ -31,3 +31,5 @@ shall silentiate and bring peace.*
 shall close its windows.*
 
 (Rationale) The system must avoid bad behavior.
+
+> THIS FILE WAS AUTOMATICALLY GENERATED.
